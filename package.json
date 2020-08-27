@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "parcel index.html --https",
-    "build": "parcel build index.html",
+    "build": "parcel build index.html --public-url ./",
+    "deploy": "push-dir --dir=dist --branch=gh-pages --cleanup --verbose",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -27,6 +28,7 @@
     "bowser": "^2.0.0-beta.3",
     "dat.gui": "^0.7.6",
     "event-emitter": "^0.3.5",
+    "gh-pages": "^3.1.0",
     "glslify": "^7.0.0"
   },
   "devDependencies": {
