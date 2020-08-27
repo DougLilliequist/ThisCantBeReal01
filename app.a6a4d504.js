@@ -8064,19 +8064,19 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-var vert = require('./shaders/triangle.vert');
+var vert = require("./shaders/triangle.vert");
 
-var opticalFlowFrag = require('./shaders/opticalflow.frag');
+var opticalFlowFrag = require("./shaders/opticalflow.frag");
 
-var captureFrag = require('./shaders/capture.frag');
+var captureFrag = require("./shaders/capture.frag");
 
-var blur = require('./shaders/blur.frag');
+var blur = require("./shaders/blur.frag");
 /**
  * Takes a input image and does following:
  * calculates brightness derivatives for optical flow
  * takes the flow image and pass it to a blur pass
  * applies the optical flow texture to a flud sim
- * 
+ *
  * getters:
  * optical flow
  * fluid sim
@@ -8183,7 +8183,7 @@ var Flow = /*#__PURE__*/function () {
       var params = {
         width: this.width,
         height: this.height,
-        type: this.gl.HALF_FLOAT || this.gl.renderer.extensions['OES_texture_half_float'].HALF_FLOAT_OES,
+        type: this.gl.HALF_FLOAT || this.gl.renderer.extensions["OES_texture_half_float"].HALF_FLOAT_OES,
         format: this.gl.RGBA,
         internalFormat: this.gl.RGBA16F,
         depth: false
@@ -9481,7 +9481,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56415" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56559" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
