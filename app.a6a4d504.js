@@ -8719,25 +8719,25 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-var base = require('./shaders/baseVertex.vert');
+var base = require("./shaders/baseVertex.vert");
 
-var advectionShader = require('./shaders/advection.frag');
+var advectionShader = require("./shaders/advection.frag");
 
-var advectionManualFilterShader = require('./shaders/advectionManualFiltering.frag');
+var advectionManualFilterShader = require("./shaders/advectionManualFiltering.frag");
 
-var clearShader = require('./shaders/clear.frag');
+var clearShader = require("./shaders/clear.frag");
 
-var curlShader = require('./shaders/curl.frag');
+var curlShader = require("./shaders/curl.frag");
 
-var divergenceShader = require('./shaders/divergence.frag');
+var divergenceShader = require("./shaders/divergence.frag");
 
-var gradientSubtractShader = require('./shaders/gradientSubtract.frag');
+var gradientSubtractShader = require("./shaders/gradientSubtract.frag");
 
-var pressureShader = require('./shaders/pressure.frag');
+var pressureShader = require("./shaders/pressure.frag");
 
-var splatShader = require('./shaders/splat.frag');
+var splatShader = require("./shaders/splat.frag");
 
-var vorticityShader = require('./shaders/vorticity.frag');
+var vorticityShader = require("./shaders/vorticity.frag");
 /**
  * Based on OGL post fluid example: https://github.com/oframe/ogl/blob/master/examples/post-fluid-distortion.html by Nathan Gordon
  */
@@ -8757,23 +8757,23 @@ var Fluid = /*#__PURE__*/function () {
     value: function initSimParams() {
       this.simRes = 256.0;
       this.dyeRes = 512.0;
-      this.texelSize = new _Vec.Vec2(1.0 / this.simRes); // this.simParams = {
-      //     iterations: 4,
-      //     densityDissipation: 0.97,
-      //     velocityDissipation: 0.98,
-      //     pressureDissipation: 0.99,
-      //     curlStrength: 0.1,
-      //     radius: 0.2
-      // }
-      //very gooey!
-
+      this.texelSize = new _Vec.Vec2(1.0 / this.simRes);
       this.simParams = {
         iterations: 4,
-        densityDissipation: 0.99,
+        densityDissipation: 0.97,
         velocityDissipation: 0.98,
-        pressureDissipation: 0.99,
+        pressureDissipation: 0.9,
         curlStrength: 0.1,
-        radius: 0.2
+        radius: 0.2 // }
+        //very gooey!
+        // this.simParams = {
+        //     iterations: 4,
+        //     densityDissipation: 0.99,
+        //     velocityDissipation: 0.98,
+        //     pressureDissipation: 0.99,
+        //     curlStrength: 0.1,
+        //     radius: 0.2
+
       };
     }
   }, {
@@ -8781,7 +8781,7 @@ var Fluid = /*#__PURE__*/function () {
     value: function initSimulationPrograms() {
       // Get supported formats and types for FBOs
       var supportLinearFiltering = this.gl.renderer.extensions["OES_texture_".concat(this.gl.renderer.isWebgl2 ? "" : "half_", "float_linear")];
-      var halfFloat = this.gl.renderer.isWebgl2 ? this.gl.HALF_FLOAT : this.gl.renderer.extensions['OES_texture_half_float'].HALF_FLOAT_OES;
+      var halfFloat = this.gl.renderer.isWebgl2 ? this.gl.HALF_FLOAT : this.gl.renderer.extensions["OES_texture_half_float"].HALF_FLOAT_OES;
       var filtering = supportLinearFiltering ? this.gl.LINEAR : this.gl.NEAREST;
       var rgba, rg, r;
 
@@ -9481,7 +9481,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65016" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56341" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
