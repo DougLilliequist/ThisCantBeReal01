@@ -8760,10 +8760,10 @@ var Fluid = /*#__PURE__*/function () {
       this.texelSize = new _Vec.Vec2(1.0 / this.simRes);
       this.simParams = {
         iterations: 4,
-        densityDissipation: 0.97,
+        densityDissipation: 0.98,
         velocityDissipation: 0.98,
         pressureDissipation: 0.9,
-        curlStrength: 0.1,
+        curlStrength: 0.01,
         radius: 0.2 // }
         //very gooey!
         // this.simParams = {
@@ -9481,7 +9481,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56341" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56415" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
