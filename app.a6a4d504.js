@@ -7438,7 +7438,7 @@ exports.Mesh = Mesh;
 },{"./Transform.js":"Vendors/ogl/src/core/Transform.js","../math/Mat3.js":"Vendors/ogl/src/math/Mat3.js","../math/Mat4.js":"Vendors/ogl/src/math/Mat4.js"}],"src/Quad/shader/quad.vert":[function(require,module,exports) {
 module.exports = "precision highp float;\n#define GLSLIFY 1\n\nattribute vec3 position;\nattribute vec2 uv;\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\n\nvarying vec2 vUV;\n\nvoid main() {\n\n    vec3 pos = position;\n\n    // gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);\n    gl_Position = vec4(pos, 1.0);\n\n    vUV = uv;\n\n}";
 },{}],"src/Quad/shader/quad.frag":[function(require,module,exports) {
-module.exports = "precision highp float;\n#define GLSLIFY 1\n\nuniform sampler2D _Video;\nuniform sampler2D _Output;\nuniform vec2 _Resolution;\n\nvarying vec2 vUV;\n\n#define FLOWSTR 0.003\n\nvoid main() {\n\n    vec2 cameraUV = vec2(1.0 - vUV.x, vUV.y);\n    cameraUV -= 0.5;\n    float aspect = (_Resolution.x / _Resolution.y) / (640.0 / 480.0);\n    cameraUV.y /= aspect;\n    cameraUV += 0.5;\n\n    vec3 flow = texture2D(_Output, vec2(1.0 - cameraUV.x, cameraUV.y)).xyz;\n    // vec3 camera = texture2D(_Video, cameraUV + flow.xy).xyz;\n    \n    float flowMag = min(1.0, length(flow.xy));\n    flow.xy *= FLOWSTR;\n\n    float r = texture2D(_Video, cameraUV + (vec2(0.0025, 0.0) *flowMag) + flow.xy).x;\n    float g = texture2D(_Video, cameraUV + (vec2(0.0, 0.0015) *flowMag) + flow.xy).y;\n    float b = texture2D(_Video, cameraUV + (vec2(-0.0025, 0.0) *flowMag) + flow.xy).z;\n\n    vec3 col = vec3(r,g,b);\n\n    gl_FragColor = vec4(col, 1.0);\n\n}";
+module.exports = "precision highp float;\n#define GLSLIFY 1\n\nuniform sampler2D _Video;\nuniform sampler2D _Output;\nuniform vec2 _Resolution;\n\nvarying vec2 vUV;\n\n#define FLOWSTR 0.003\n\nvoid main() {\n\n    vec2 cameraUV = vec2(1.0 - vUV.x, vUV.y);\n    cameraUV -= 0.5;\n    float aspect = (_Resolution.x / _Resolution.y) / (640.0 / 480.0);\n    cameraUV.y /= aspect;\n    cameraUV += 0.5;\n\n    vec3 flow = texture2D(_Output, vec2(1.0 - cameraUV.x, cameraUV.y)).xyz;\n    // vec3 camera = texture2D(_Video, cameraUV + flow.xy).xyz;\n    \n    float flowMag = min(1.0, length(flow.xy));\n    flow.xy *= FLOWSTR;\n\n    float r = texture2D(_Video, cameraUV + (vec2(0.003, 0.0) *flowMag) + flow.xy).x;\n    float g = texture2D(_Video, cameraUV + (vec2(0.0, 0.0015) *flowMag) + flow.xy).y;\n    float b = texture2D(_Video, cameraUV + (vec2(-0.003, 0.0) *flowMag) + flow.xy).z;\n\n    vec3 col = vec3(r,g,b);\n\n    gl_FragColor = vec4(col, 1.0);\n\n}";
 },{}],"src/Quad/index.js":[function(require,module,exports) {
 "use strict";
 
@@ -8205,7 +8205,7 @@ var Flow = /*#__PURE__*/function () {
           value: new _Vec.Vec2(this.gl.renderer.width, this.gl.renderer.height)
         },
         _TexelSize: {
-          value: new _Vec.Vec2(1.0 / this.gl.renderer.width, 1.0 / this.gl.renderer.height)
+          value: new _Vec.Vec2(1.0 / 640, 1.0 / 480)
         },
         _Scale: {
           value: 800
@@ -9303,7 +9303,7 @@ var OpticalFlow = /*#__PURE__*/function () {
     this.renderer = new _Renderer.Renderer({
       width: window.innerWidth,
       height: window.innerHeight,
-      antiAlias: true
+      antialias: false
     });
     this.gl = this.renderer.gl;
     this.gl.canvas.style.position = "absolute";
@@ -9481,7 +9481,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56559" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51755" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
