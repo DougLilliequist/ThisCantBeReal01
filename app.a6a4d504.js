@@ -8205,7 +8205,7 @@ var Flow = /*#__PURE__*/function () {
           value: new _Vec.Vec2(this.gl.renderer.width, this.gl.renderer.height)
         },
         _TexelSize: {
-          value: new _Vec.Vec2(1.0 / 640, 1.0 / 480)
+          value: new _Vec.Vec2(1.0 / this, this.width, 1.0 / this.height)
         },
         _Scale: {
           value: 800
@@ -9481,7 +9481,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51755" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52448" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
