@@ -7438,7 +7438,7 @@ exports.Mesh = Mesh;
 },{"./Transform.js":"Vendors/ogl/src/core/Transform.js","../math/Mat3.js":"Vendors/ogl/src/math/Mat3.js","../math/Mat4.js":"Vendors/ogl/src/math/Mat4.js"}],"src/Quad/shader/quad.vert":[function(require,module,exports) {
 module.exports = "precision highp float;\n#define GLSLIFY 1\n\nattribute vec3 position;\nattribute vec2 uv;\n\nuniform mat4 projectionMatrix;\nuniform mat4 modelViewMatrix;\n\nvarying vec2 vUV;\n\nvoid main() {\n\n    vec3 pos = position;\n\n    // gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);\n    gl_Position = vec4(pos, 1.0);\n\n    vUV = uv;\n\n}";
 },{}],"src/Quad/shader/quad.frag":[function(require,module,exports) {
-module.exports = "precision highp float;\n#define GLSLIFY 1\n\nuniform sampler2D _Video;\nuniform sampler2D _Output;\nuniform vec2 _Resolution;\n\nvarying vec2 vUV;\n\n#define FLOWSTR 0.003\n\nvoid main() {\n\n    vec2 cameraUV = vec2(1.0 - vUV.x, vUV.y);\n    cameraUV -= 0.5;\n    float aspect = (_Resolution.x / _Resolution.y) / (640.0 / 480.0);\n    cameraUV.y /= aspect;\n    cameraUV += 0.5;\n\n    vec3 flow = texture2D(_Output, vec2(1.0 - cameraUV.x, cameraUV.y)).xyz;\n    // vec3 camera = texture2D(_Video, cameraUV + flow.xy).xyz;\n    \n    float flowMag = min(1.0, length(flow.xy));\n    flow.xy *= FLOWSTR;\n\n    float r = texture2D(_Video, cameraUV + (vec2(0.003, 0.0) *flowMag) + flow.xy).x;\n    float g = texture2D(_Video, cameraUV + (vec2(0.0, 0.0015) *flowMag) + flow.xy).y;\n    float b = texture2D(_Video, cameraUV + (vec2(-0.003, 0.0) *flowMag) + flow.xy).z;\n\n    vec3 col = vec3(r,g,b);\n\n    gl_FragColor = vec4(col, 1.0);\n    // gl_FragColor = vec4(flow.x, flow.y, 0.0, 1.0);\n\n}";
+module.exports = "precision highp float;\n#define GLSLIFY 1\n\nuniform sampler2D _Video;\nuniform sampler2D _Output;\nuniform vec2 _Resolution;\n\nvarying vec2 vUV;\n\n#define FLOWSTR 0.003\n\nvoid main() {\n\n    vec2 cameraUV = vec2(1.0 - vUV.x, vUV.y);\n    cameraUV -= 0.5;\n    float aspect = (_Resolution.x / _Resolution.y) / (640.0 / 480.0);\n    cameraUV.y /= aspect;\n    cameraUV += 0.5;\n\n    vec3 flow = texture2D(_Output, vec2(1.0 - cameraUV.x, cameraUV.y)).xyz;\n    // vec3 camera = texture2D(_Video, cameraUV + flow.xy).xyz;\n    \n    float flowMag = min(1.0, length(flow.xy));\n    flow.xy *= FLOWSTR;\n\n    float r = texture2D(_Video, cameraUV + (vec2(0.003, 0.0) *flowMag) + flow.xy).x;\n    float g = texture2D(_Video, cameraUV + (vec2(0.0, 0.0015) *flowMag) + flow.xy).y;\n    float b = texture2D(_Video, cameraUV + (vec2(-0.003, 0.0) *flowMag) + flow.xy).z;\n\n    vec3 col = vec3(r,g,b);\n\n    // gl_FragColor = vec4(flow.x, flow.y, 0.0, 1.0);\n    gl_FragColor = vec4(col, 1.0);\n    // gl_FragColor = vec4(flow.x, flow.y, 0.0, 1.0);\n\n}";
 },{}],"src/Quad/index.js":[function(require,module,exports) {
 "use strict";
 
@@ -8031,7 +8031,7 @@ exports.RenderTarget = RenderTarget;
 },{"./Texture.js":"Vendors/ogl/src/core/Texture.js"}],"src/Flow/shaders/triangle.vert":[function(require,module,exports) {
 module.exports = "precision highp float;\n#define GLSLIFY 1\n\nattribute vec2 position;\nattribute vec2 uv;\n\nvarying vec2 vUV;\n\nvoid main() {\n\n    gl_Position = vec4(position, 0.0, 1.0);\n    vUV = uv;\n\n}";
 },{}],"src/Flow/shaders/opticalflow.frag":[function(require,module,exports) {
-module.exports = "precision highp float;\n#define GLSLIFY 1\n\nuniform sampler2D _CurrentFrame;\nuniform sampler2D _PrevFrame;\nuniform sampler2D _PrevFlow;\n\nuniform vec2 _Resolution;\nuniform vec2 _TexelSize;\nuniform float _Scale;\n\nvarying vec2 vUV;\n\n// #define TINY 0.000001\n// #define THRESHOLD 0.007 \n\n// #define THRESHOLD 0.007\n#define THRESHOLD 0.007\n// #define TINY 0.00001\n#define TINY 0.000001\n\n//HEAVILY INSPIRED FROM FOLLOWING SHADERS: \n//https://github.com/moostrik/ofxFlowTools/blob/master/src/core/opticalflow/ftOpticalFlowShader.h\n//By: Matthias Oostrik https://github.com/moostrik\n\n//http://www.thomasdiewald.com/\n\nvoid main() {\n\n    vec2 uv = vec2(1.0 - vUV.x, vUV.y);\n\n    //derivative X\n    float dX = texture2D(_PrevFrame, uv + vec2(_TexelSize.x, 0.0)).x - texture2D(_PrevFrame, uv - vec2(_TexelSize.x, 0.0)).x;\n    dX += texture2D(_CurrentFrame, uv + vec2(_TexelSize.x, 0.0)).x - texture2D(_CurrentFrame, uv - vec2(_TexelSize.x, 0.0)).x;\n\n    //derivative y\n    float dY = texture2D(_PrevFrame, uv + vec2(0.0, _TexelSize.y)).x - texture2D(_PrevFrame, uv - vec2(0.0, _TexelSize.y)).x;\n    dY += texture2D(_CurrentFrame, uv + vec2(0.0, _TexelSize.y)).x - texture2D(_CurrentFrame, uv - vec2(0.0, _TexelSize.y)).x;\n\n    //gradient magnitude\n    float mag = sqrt((dX * dX) + (dY * dY) + TINY);\n\n    //brightness difference\n    float dT = texture2D(_CurrentFrame, uv).x - texture2D(_PrevFrame, uv).x;\n\n    float vX = (dX / mag) * dT;\n    float vY = (dY / mag) * dT;\n\n    vec2 flow = vec2(vX, vY * -1.0);\n\n    // float flowMag = length(flow);\n    // flowMag = max(flowMag, THRESHOLD);\n    // flowMag -= THRESHOLD;\n    // flowMag /= (1.0 - THRESHOLD);\n    // // flowMag = flowMag * flowMag;\n    // flow += TINY; //prevents divisions by 0 when normalizing\n    // flow = normalize(flow) * min(flowMag, 1.0);\n    // flow *= _Scale; \n\n    float oldLen = sqrt((flow.x * flow.x) + (flow.y * flow.y) + 0.00001);\n    float newLen = max(oldLen - THRESHOLD, 0.0);\n    flow = (newLen * flow)/oldLen;\n\n    flow *= _Scale; \n\n    vec3 prevFlow = texture2D(_PrevFlow, vUV).xyz;\n\n    vec3 outPut = mix(vec3(flow, length(flow)), prevFlow, 0.93);\n    // vec3 outPut = mix(vec3(flow, length(flow)), prevFlow, 0.97);\n    \n    // gl_FragColor = vec4(vec3(flow, length(flow)), 1.0);\n    gl_FragColor = vec4(outPut, 1.0);\n\n}";
+module.exports = "precision highp float;\n#define GLSLIFY 1\n\nuniform sampler2D _CurrentFrame;\nuniform sampler2D _PrevFrame;\nuniform sampler2D _PrevFlow;\n\nuniform vec2 _Resolution;\nuniform vec2 _TexelSize;\nuniform float _Scale;\n\nvarying vec2 vUV;\n\n// #define TINY 0.000001\n// #define THRESHOLD 0.007 \n\n// #define THRESHOLD 0.007\n#define THRESHOLD 0.007\n// #define TINY 0.00001\n#define TINY 0.000001\n\n//HEAVILY INSPIRED FROM FOLLOWING SHADERS: \n//https://github.com/moostrik/ofxFlowTools/blob/master/src/core/opticalflow/ftOpticalFlowShader.h\n//By: Matthias Oostrik https://github.com/moostrik\n\n//http://www.thomasdiewald.com/\n\nvoid main() {\n\n    vec2 uv = vec2(1.0 - vUV.x, vUV.y);\n\n    //derivative X\n    float dX = texture2D(_PrevFrame, uv + vec2(_TexelSize.x, 0.0)).x - texture2D(_PrevFrame, uv - vec2(_TexelSize.x, 0.0)).x;\n    dX += texture2D(_CurrentFrame, uv + vec2(_TexelSize.x, 0.0)).x - texture2D(_CurrentFrame, uv - vec2(_TexelSize.x, 0.0)).x;\n\n    //derivative y\n    float dY = texture2D(_PrevFrame, uv + vec2(0.0, _TexelSize.y)).x - texture2D(_PrevFrame, uv - vec2(0.0, _TexelSize.y)).x;\n    dY += texture2D(_CurrentFrame, uv + vec2(0.0, _TexelSize.y)).x - texture2D(_CurrentFrame, uv - vec2(0.0, _TexelSize.y)).x;\n\n    //gradient magnitude\n    float mag = sqrt((dX * dX) + (dY * dY) + TINY);\n\n    //brightness difference\n    float dT = texture2D(_CurrentFrame, uv).x - texture2D(_PrevFrame, uv).x;\n\n    float vX = (dX / mag) * dT;\n    float vY = (dY / mag) * dT;\n\n    vec2 flow = vec2(vX, vY * -1.0);\n\n    // float flowMag = length(flow);\n    // flowMag = max(flowMag, THRESHOLD);\n    // flowMag -= THRESHOLD;\n    // flowMag /= (1.0 - THRESHOLD);\n    // // flowMag = flowMag * flowMag;\n    // flow += TINY; //prevents divisions by 0 when normalizing\n    // flow = normalize(flow) * min(flowMag, 1.0);\n    // flow *= _Scale; \n\n    float oldLen = sqrt((flow.x * flow.x) + (flow.y * flow.y) + 0.00001);\n    float newLen = max(oldLen - THRESHOLD, 0.0);\n    flow = (newLen * flow)/oldLen;\n\n    flow *= _Scale; \n\n    vec3 prevFlow = texture2D(_PrevFlow, vUV).xyz;\n\n    vec3 outPut = mix(vec3(flow, length(flow)), prevFlow, 0.97);\n    // vec3 outPut = mix(vec3(flow, length(flow)), prevFlow, 0.97);\n    \n    // gl_FragColor = vec4(vec3(flow, length(flow)), 1.0);\n    gl_FragColor = vec4(outPut, 1.0);\n\n}";
 },{}],"src/Flow/shaders/capture.frag":[function(require,module,exports) {
 module.exports = "precision highp float;\n#define GLSLIFY 1\n\nuniform sampler2D _CameraFrame;\n\nvarying vec2 vUV;\n\nvoid main() {\n\n    vec3 col = texture2D(_CameraFrame, vUV).xyz;\n    gl_FragColor = vec4(col, 1.0);\n\n}";
 },{}],"src/Flow/shaders/blur.frag":[function(require,module,exports) {
@@ -8214,7 +8214,7 @@ var Flow = /*#__PURE__*/function () {
         //   )
         // },
         _Scale: {
-          value: 1000
+          value: 800
         }
       };
       this.opticalFlowQuad = new _Mesh.Mesh(this.gl, {
@@ -8767,10 +8767,16 @@ var Fluid = /*#__PURE__*/function () {
       this.simParams = {
         iterations: 4,
         densityDissipation: 0.98,
-        velocityDissipation: 0.98,
+        velocityDissipation: 0.99,
         pressureDissipation: 0.9,
         curlStrength: 0.01,
-        radius: 0.2 // }
+        radius: 0.2 // iterations: 4,
+        // densityDissipation: 0.98,
+        // velocityDissipation: 0.99,
+        // pressureDissipation: 0.9,
+        // curlStrength: 0.01,
+        // radius: 0.2
+        // }
         //very gooey!
         // this.simParams = {
         //     iterations: 4,
@@ -9448,7 +9454,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var App = function App() {
   _classCallCheck(this, App);
 
-  console.log('this can\'t be...real? ◕_◕');
+  console.log('◕_◕ this can\'t be...real? ◕_◕');
   console.log('douglas@adventureclub.io');
   console.log('douglas.lilliequist@gmail.com');
   new _index.default();
@@ -9487,7 +9493,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51765" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54162" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
