@@ -8245,7 +8245,7 @@ var Flow = /*#__PURE__*/function () {
     value: function blurInputVideo() {
       // const blurIterationCount = 12;
       // const blurIterationCount = 10;
-      var blurIterationCount = 5;
+      var blurIterationCount = 6;
       this.gl.renderer.autoClear = false;
 
       for (var i = 0; i < blurIterationCount; i++) {
@@ -9495,7 +9495,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58479" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59142" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
